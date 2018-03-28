@@ -10,15 +10,16 @@ gr = (1 + sqrt 5)/2
 
 -- Configuration
 
+margin = 3
 fileName = "logo.svg"
-nbrSections = 4
+nbrSections = 3
 logoRadius = 200
 sectionAngle = 2*pi/fromIntegral nbrSections
 ccConnectorDistance = 2*logoRadius*sin(sectionAngle/2)
 femaleOuterRadius = ccConnectorDistance*gr/(1 + 2*gr)
-femaleWidth = femaleOuterRadius/(2 + 1/gr)
+femaleWidth = femaleOuterRadius/(2 + 1/gr)/2
 ringWidth = 2*femaleWidth/gr
-maleRadius = femaleWidth
+maleRadius = femaleOuterRadius - femaleWidth - margin
 
 -- Generation
 
@@ -28,7 +29,7 @@ genLogo =
 
 logo :: Int -> SymbolicObj2
 logo nbr =
-    rotate (-pi/6) $ union $
+    rotate (-pi/10) $ union $
         map (\s -> rotate (sectionAngle*fromIntegral s) section)
             [0..(nbr - 1)]
 
@@ -47,6 +48,9 @@ section =
             , rotate sectionAngle $ translate (logoRadius, 0) connFemale
             -- add the piece connecting them
             , ringSlice logoRadius ringWidth (beta + sectionAngle/2)
+            -- add the outer dots
+            , rotate (sectionAngle/2) $ translate (logoRadius + ringWidth/2 + ringWidth*gr, 0) $
+                  circle ringWidth
             ]
 
 connMale :: SymbolicObj2
@@ -57,7 +61,7 @@ connFemale :: SymbolicObj2
 connFemale =
     difference
         [ ring (femaleOuterRadius - femaleWidth/2) femaleWidth
-        , translate (-logoRadius, 0) $ ringSlice logoRadius (ringWidth + femaleWidth/2) (pi/2)
+        , translate (-logoRadius, 0) $ ringSlice logoRadius (ringWidth + 2*margin) (pi/2)
         ]
 
 pieSlice :: ℝ -> ℝ -> SymbolicObj2
