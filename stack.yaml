@@ -3,5 +3,6 @@ extra-package-dbs: []
 packages:
 - '.'
 extra-deps:
-- implicit-0.1.0
-resolver: lts-9.20
+- implicit-0.2.0
+- storable-endian-0.2.6
+resolver: lts-13.10
